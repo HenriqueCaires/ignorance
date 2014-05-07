@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using Ignorance.Testing.Data.EntityFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ninject;
+using Ignorance.Testing.AdventureWorksProvider;
+using Ignorance.Testing.Domain;
 
 namespace Ignorance.Testing
 {
@@ -13,9 +16,10 @@ namespace Ignorance.Testing
         [TestMethod]
         public void it_should_persist_to_storage()
         {
-            using (var db = new AdventureWorksEntities())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
-                var d = db.Departments.FirstOrDefault(p => p.Name == this.Dept.Name);
+                var s = new DepartmentService(work);
+                var d = s.FindByName(this.Dept.Name);
                 Assert.IsNotNull(d, "Entity was not created and saved.");
             }
         }

@@ -3,7 +3,8 @@ using System.Collections;
 
 namespace Ignorance.LinqToSql
 {
-    public class Work : Ignorance.Work
+    public interface IWorkLinqToSql : IWork { }
+    public class Work : Ignorance.Work, IWorkLinqToSql
     {
         public DataContext DataContext { get; set; }
 

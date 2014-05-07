@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using Ignorance.Domain;
 using Ignorance.Testing.Data;
+using Ignorance.Testing.AdventureWorksProvider;
 
 namespace Ignorance.Testing.Domain
 {
-    public class ContactService : Service<Contact>
+    public interface IContactService : IService<Contact>
     {
-        public ContactService(IWork work) : base(work) { }
+        IEnumerable<Department> All();
+        Department First();
+        void Delete(Department entity);
+        void DeleteAndSave(Department entity);
+        Department FindByName(string name);
+        void SaveChanges();
+    }
+
+    public class ContactService : Service<Contact>, IContactService
+    {
+        public ContactService(IWorkAdventureWork work) : base(work, new Ignorance.EntityFramework.Store<Contact>(work)) { }
+
+        public ContactService(IWorkAdventureWork work, IStore<Contact> store) : base(work, store) { }
 
         protected override void OnCreated(Contact entity)
         {
@@ -34,8 +47,7 @@ namespace Ignorance.Testing.Domain
 
         public IEnumerable<Contact> GetByLastName(string lastName)
         {
-            var repo = GetStore();
-            return repo.Some(p => 
+            return this.Store.Some(p => 
                 p.LastName.Equals(lastName, 
                     StringComparison.InvariantCultureIgnoreCase))
                 .AsEnumerable();
@@ -43,14 +55,12 @@ namespace Ignorance.Testing.Domain
 
         public IEnumerable<Contact> GetContactsWithSuffixesBecauseTheyAreAwesome()
         {
-            var repo = GetStore();
-            return repo.Some(p => p.Suffix != null);
+            return this.Store.Some(p => p.Suffix != null);
         }
 
         public void JustGoAheadAndMakeSureEveryoneHasSuffixesNow()
         {
-            var repo = GetStore();
-            var unsuffixedPeeps = repo.Some(p => p.Suffix == null);
+            var unsuffixedPeeps = this.Store.Some(p => p.Suffix == null);
             
             foreach (var peep in unsuffixedPeeps)
             {
@@ -60,8 +70,37 @@ namespace Ignorance.Testing.Domain
 
         public int GetContactCount()
         {
-            var repo = GetStore();
-            return repo.All().Count();
+            return this.Store.All().Count();
+        }
+
+        public IEnumerable<Department> All()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Department First()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Department entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAndSave(Department entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Department FindByName(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SaveChanges()
+        {
+            throw new NotImplementedException();
         }
     }
 }

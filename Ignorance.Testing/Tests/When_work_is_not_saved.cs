@@ -4,6 +4,8 @@ using Ignorance.Testing.Data;
 using Ignorance.Testing.Data.EntityFramework;
 using Ignorance.Testing.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ninject;
+using Ignorance.Testing.AdventureWorksProvider;
 
 namespace Ignorance.Testing
 {
@@ -12,19 +14,26 @@ namespace Ignorance.Testing
     {
         public short TestDepartmentID { get; set; }
 
+        private IKernel kernel;
+        
         [TestInitialize]
         public void SetUp()
         {
+            kernel = new StandardKernel();
+
+            kernel.Bind<IWorkAdventureWork>().ToProvider<AdventureWorkProvider>();
+
             // create a record using straight EF
-            using (var db = new AdventureWorksEntities())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
+                var s = new DepartmentService(work);
                 var d = new Department() { 
                      Name = "Ignorance",
                      GroupName = "Information Technology",
                      ModifiedDate = DateTime.Today
                 };
-                db.Departments.Add(d);
-                db.SaveChanges();
+                s.Add(d);
+                s.SaveChanges();
 
                 this.TestDepartmentID = d.DepartmentID;
             }
@@ -36,7 +45,7 @@ namespace Ignorance.Testing
         {
             var guidName = Guid.NewGuid().ToString();
             // using Service API, Add a record
-            using (var work = Ignorance.Create.Work())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
                 var s = new DepartmentService(work);
                 var d = s.Create();
@@ -58,9 +67,9 @@ namespace Ignorance.Testing
         public void changes_to_entities_should_not_persist()
         {
             // using Service API, call Update on the record
-            using (var work = Ignorance.Create.Work())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
-                var s = new DepartmentService(work);
+                var s = new DepartmentService(work); ;
                 var d = s.GetByID(this.TestDepartmentID);
                 d.Name = "Updated";
                 s.Update(d);
@@ -80,7 +89,7 @@ namespace Ignorance.Testing
         public void entities_should_not_be_deleted_from_storage()
         {
             // using Service API, call Delete on the record
-            using (var work = Ignorance.Create.Work())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
                 var s = new DepartmentService(work);
                 var d = s.GetByID(this.TestDepartmentID);
@@ -101,11 +110,11 @@ namespace Ignorance.Testing
         public void TearDown()
         {
             // delete the test record using straight EF
-            using (var db = new AdventureWorksEntities())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
-                var d = db.Departments.Find(this.TestDepartmentID);
-                db.Departments.Remove(d);
-                db.SaveChanges();
+                var s = new DepartmentService(work);
+                var d = s.Find(this.TestDepartmentID);
+                s.DeleteAndSave(d);
             }
         }
     }

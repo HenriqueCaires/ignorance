@@ -7,7 +7,8 @@ using System.Runtime.Serialization.Json;
 
 namespace Ignorance.IsolatedStorage
 {
-    public class Work : Ignorance.Work
+    public interface IWorkIsolatedStorage : IWork { }
+    public class Work : Ignorance.Work, IWorkIsolatedStorage
     {
         public Dictionary<string, ICollection> Data { get; private set; }
 

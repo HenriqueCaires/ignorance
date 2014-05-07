@@ -1,6 +1,8 @@
-﻿using Ignorance.Testing.Data.EntityFramework;
+﻿using Ignorance.Testing.AdventureWorksProvider;
+using Ignorance.Testing.Data.EntityFramework;
 using Ignorance.Testing.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ninject;
 using System;
 
 namespace Ignorance.Testing
@@ -12,7 +14,7 @@ namespace Ignorance.Testing
         public void it_can_come_from_the_current_Work()
         {
             // delete the test entity
-            using (var work = Ignorance.Create.Work())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
                 var s = new DepartmentService(work);
                 var d = s.GetByID(this.Dept.DepartmentID);
@@ -33,18 +35,17 @@ namespace Ignorance.Testing
         public void it_can_come_from_outside_the_current_Work()
         {
             // delete the test entity
-            using (var work = Ignorance.Create.Work())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
                 var s = new DepartmentService(work);
-                s.Delete(this.Dept);
-
-                work.Save();
+                s.DeleteAndSave(this.Dept);
             }
 
             // verify its deletion
-            using (var db = new AdventureWorksEntities())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
-                var d = db.Departments.Find(this.Dept.DepartmentID);
+                var s = new DepartmentService(work);
+                var d = s.Find(this.Dept.DepartmentID);
                 Assert.IsNull(d, "Entity was not deleted.");
             }
         }
@@ -53,7 +54,7 @@ namespace Ignorance.Testing
         [ExpectedException(typeof(ApplicationException), "OnDeleting was not called when deleting the entity.")]
         public void it_should_call_OnDeleting_first()
         {
-            using (var work = Create.Work())
+            using (var work = kernel.Get<IWorkAdventureWork>())
             {
                 var s = new DepartmentService(work);
                 var d = s.GetByID(this.Dept.DepartmentID);

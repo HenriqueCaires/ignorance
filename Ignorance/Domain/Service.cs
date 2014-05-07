@@ -1,13 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Ignorance.Domain
 {
+    public interface IService<T>
+     where T : class
+    {
+        void Add(System.Collections.Generic.IEnumerable<T> entities);
+        void Add(T entity);
+        void AddAndSave(T entity);
+        T Create();
+        void Delete(System.Collections.Generic.IEnumerable<T> entities);
+        void Delete(T entity);
+        void DeleteAndSave(T entity);
+        void Update(System.Collections.Generic.IEnumerable<T> entities);
+        void Update(T entity);
+        void UpdateAndSave(T entity);
+    }
+
     /// <summary>
     /// A partial implementation of a Domain Service. A class implementing this abstract 
     /// governs business rules around an entity of type T.
     /// </summary>
     /// <typeparam name="T">The data entity type to be serviced.</typeparam>
-    public abstract class Service<T> 
+    public abstract class Service<T> : IService<T>
         where T : class
     {
         /// <summary>
@@ -15,9 +31,17 @@ namespace Ignorance.Domain
         /// unit of work. If no UoW is given, a 
         /// new UoW is created.
         /// </summary>
-        public Service(IWork work = null)
+        public Service(IWork work, IStore<T> store)
         {
+            if (work == null)
+                throw new NullReferenceException("work");
+
+            if (store == null)
+                throw new NullReferenceException("store");
+
             this.Work = work;
+            this.Store = store;
+
             WireUpValidators();
         }
 
@@ -58,46 +82,19 @@ namespace Ignorance.Domain
         /// </summary>
         protected abstract void OnSaving(T entity);
 
-        private IWork _work;
         /// <summary>
         /// Gets or sets the unit of work
         /// for the service being performed.
         /// </summary>
-        protected IWork Work
-        {
-            get
-            {
-                if (_work == null)
-                    _work = Ignorance.Create.Work();
-                return _work;
-            }
-            private set
-            {
-                _work = value;
-            }
-        }
+        protected IWork Work { get; set; }
 
         /// <summary>
-        /// Gets an instance of a Store for the service's entity type,
+        /// Gets or sets a Store for the service's entity type,
         /// connected to the service's unit of work.
         /// </summary>
         /// <returns></returns>
-        protected virtual IStore<T> GetStore() 
-        {
-            return Ignorance.Create.Store<T>(this.Work);
-        }
-
-        /// <summary>
-        /// Gets an instance of a Store for the given entity type,
-        /// connected to the service's unit of work context.
-        /// </summary>
-        /// <typeparam name="E">What flavor of Store would you like?</typeparam>
-        /// <returns></returns>
-        protected virtual IStore<E> GetStore<E>() where E : class
-        {
-            return Ignorance.Create.Store<E>(this.Work);
-        }
-
+        protected IStore<T> Store { get; set; }
+        
         /// <summary>
         /// Called after the given entity has been instantiated. 
         /// Use this method to apply defaults for the entity.
@@ -127,8 +124,7 @@ namespace Ignorance.Domain
         /// <param name="entity"></param>
         public virtual void Add(T entity)
         {
-            var store = GetStore<T>();
-            store.Add(entity);
+            this.Store.Add(entity);
         }
 
         /// <summary>
@@ -150,8 +146,7 @@ namespace Ignorance.Domain
         /// <param name="entity"></param>
         public virtual void Update(T entity)
         {
-            var store = GetStore();
-            store.Attach(entity);
+            this.Store.Attach(entity);
         }
 
         /// <summary>
@@ -171,9 +166,8 @@ namespace Ignorance.Domain
         /// <param name="entity"></param>
         public virtual void Delete(T entity)
         {
-            var store = GetStore();
-            store.Attach(entity);
-            store.Remove(entity);
+            this.Store.Attach(entity);
+            this.Store.Remove(entity);
         }
         
         /// <summary>
@@ -184,6 +178,22 @@ namespace Ignorance.Domain
         public virtual void Delete(IEnumerable<T> entities)
         {
             foreach (var e in entities) Delete(e);
+        }
+
+
+        public void AddAndSave(T entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteAndSave(T entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateAndSave(T entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,7 +3,8 @@ using System.Linq;
 
 namespace Ignorance.EntityFramework
 {
-    public class Work : Ignorance.Work
+    public interface IWorkEntityFramework : IWork { }
+    public class Work : Ignorance.Work, IWorkEntityFramework
     {
         public DbContext DataContext { get; set; }
 
@@ -11,7 +12,7 @@ namespace Ignorance.EntityFramework
         {
             this.DataContext = context;
         }
-        
+
         protected override void Commit()
         {
             this.DataContext.SaveChanges();
@@ -21,13 +22,13 @@ namespace Ignorance.EntityFramework
         {
             this.DataContext.Dispose();
         }
-        
+
         public override System.Collections.ICollection Added
         {
-            get 
+            get
             {
                 return (from p in this.DataContext.ChangeTracker.Entries()
-                        where p.State == System.Data.EntityState.Added
+                        where p.State == EntityState.Added
                         select p.Entity).ToList();
             }
         }
@@ -37,7 +38,7 @@ namespace Ignorance.EntityFramework
             get
             {
                 return (from p in this.DataContext.ChangeTracker.Entries()
-                        where p.State == System.Data.EntityState.Modified
+                        where p.State == EntityState.Modified
                         select p.Entity).ToList();
             }
         }
@@ -47,7 +48,7 @@ namespace Ignorance.EntityFramework
             get
             {
                 return (from p in this.DataContext.ChangeTracker.Entries()
-                        where p.State == System.Data.EntityState.Deleted
+                        where p.State == EntityState.Deleted
                         select p.Entity).ToList();
             }
         }

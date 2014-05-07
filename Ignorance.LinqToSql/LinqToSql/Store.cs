@@ -8,7 +8,7 @@ namespace Ignorance.LinqToSql
 {
     public abstract class Store<T> : Ignorance.Store<T> where T : class
     {
-        public Store(Work work) : base(work) { }
+        public Store(IWorkLinqToSql work) : base(work) { }
 
         protected virtual DataContext Context
         {
