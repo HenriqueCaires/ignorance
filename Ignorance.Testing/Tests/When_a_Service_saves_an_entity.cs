@@ -2,7 +2,6 @@
 using Ignorance.Testing.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
-using Ignorance.Testing.AdventureWorksProvider;
 
 namespace Ignorance.Testing
 {
@@ -15,27 +14,25 @@ namespace Ignorance.Testing
         [ExpectedException(typeof(ApplicationException), "OnSaving was not called when saving the entity.")]
         public void it_should_call_OnSaving_for_added_entities()
         {
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.Create();
+                var d = ignorant.Create();
                 d.Name = bad_department_name;
-                s.Add(d);
+                ignorant.Add(d);
 
-                work.Save();
+                ignorant.Save();
             }
         }
         [TestMethod]
         [ExpectedException(typeof(ApplicationException), "OnSaving was not called when saving the entity.")]
         public void it_should_call_OnSaving_for_updated_entities()
         {
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.GetByID(this.Dept.DepartmentID);
+                var d = ignorant.GetByID(this.Dept.DepartmentID);
                 d.Name = bad_department_name;
 
-                work.Save();
+                ignorant.Save();
             }
         }
     }

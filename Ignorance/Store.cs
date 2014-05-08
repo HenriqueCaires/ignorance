@@ -19,7 +19,7 @@ namespace Ignorance
         {
             this.Work = work;
         }
-        
+
         /// <summary>
         /// Gets or sets the unit of work 
         /// for the repository.
@@ -30,7 +30,7 @@ namespace Ignorance
         /// Gets internal queryable access to the repository's data.
         /// </summary>
         protected abstract IQueryable<T> Data { get; }
-                
+
         /// <summary>
         /// Gets queryable access to the entire 
         /// pile of entities in the repository. I'd say
@@ -47,7 +47,7 @@ namespace Ignorance
         /// Pares the whole set of tuples down 
         /// some, using the given expression.
         /// </summary>
-        public virtual IQueryable<T> Some(System.Linq.Expressions.Expression<Func<T, bool>> where) 
+        public virtual IQueryable<T> Some(System.Linq.Expressions.Expression<Func<T, bool>> where)
         {
             return this.Data.Where(where);
         }

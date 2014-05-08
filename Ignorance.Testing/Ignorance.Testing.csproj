@@ -74,7 +74,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdventureWorksProvider\AdventureWorkProvider.cs" />
+    <Compile Include="AdventureWorksProvider\IgnorantProviders.cs" />
     <Compile Include="Data\Address.cs">
       <DependentUpon>AdventureWorks.tt</DependentUpon>
     </Compile>
@@ -306,14 +306,13 @@
     <Compile Include="Data\WorkOrderRouting.cs">
       <DependentUpon>AdventureWorks.tt</DependentUpon>
     </Compile>
-    <Compile Include="Domain\ContactService.cs" />
-    <Compile Include="Domain\DepartmentService.cs" />
+    <Compile Include="Domain\IgnorantContact.cs" />
+    <Compile Include="Domain\IgnorantDepartment.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="AdventureWorksProvider\WorkAdventureWork.cs" />
     <Compile Include="Tests\When_work_is_not_saved.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

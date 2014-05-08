@@ -1,10 +1,10 @@
-﻿using System.Data.Entity;
+﻿using System.Collections;
+using System.Data.Entity;
 using System.Linq;
 
 namespace Ignorance.EntityFramework
 {
-    public interface IWorkEntityFramework : IWork { }
-    public class Work : Ignorance.Work, IWorkEntityFramework
+    public class Work : Ignorance.Work
     {
         public DbContext DataContext { get; set; }
 
@@ -23,7 +23,7 @@ namespace Ignorance.EntityFramework
             this.DataContext.Dispose();
         }
 
-        public override System.Collections.ICollection Added
+        public override ICollection Added
         {
             get
             {
@@ -33,7 +33,7 @@ namespace Ignorance.EntityFramework
             }
         }
 
-        public override System.Collections.ICollection Updated
+        public override ICollection Updated
         {
             get
             {
@@ -43,7 +43,7 @@ namespace Ignorance.EntityFramework
             }
         }
 
-        public override System.Collections.ICollection Deleted
+        public override ICollection Deleted
         {
             get
             {

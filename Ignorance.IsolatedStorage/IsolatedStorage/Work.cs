@@ -7,8 +7,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Ignorance.IsolatedStorage
 {
-    public interface IWorkIsolatedStorage : IWork { }
-    public class Work : Ignorance.Work, IWorkIsolatedStorage
+    public class Work : Ignorance.Work
     {
         public Dictionary<string, ICollection> Data { get; private set; }
 
@@ -26,7 +25,7 @@ namespace Ignorance.IsolatedStorage
                     this.Data[filename] = data as ICollection;
             }
         }
-        
+
         protected override void Commit()
         {
             var store = IsolatedStorageFile.GetUserStoreForApplication();
@@ -49,7 +48,7 @@ namespace Ignorance.IsolatedStorage
 
         public override ICollection Added
         {
-            get 
+            get
             { throw new NotImplementedException(); }
         }
 

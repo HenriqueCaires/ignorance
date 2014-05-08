@@ -3,8 +3,7 @@ using System.Collections;
 
 namespace Ignorance.LinqToSql
 {
-    public interface IWorkLinqToSql : IWork { }
-    public class Work : Ignorance.Work, IWorkLinqToSql
+    public class Work : Ignorance.Work
     {
         public DataContext DataContext { get; set; }
 
@@ -39,7 +38,7 @@ namespace Ignorance.LinqToSql
             }
         }
 
-        public override System.Collections.ICollection Deleted
+        public override ICollection Deleted
         {
             get
             {

@@ -38,7 +38,7 @@ namespace Ignorance
         /// </summary>
         /// <param name="entity"></param>
         void Remove(T entity);
-        
+
         /// <summary>
         /// Adds the given entity to the
         /// repository, to be persisted at the thrilling 
@@ -54,5 +54,6 @@ namespace Ignorance
         /// </summary>
         /// <param name="entity"></param>
         void Attach(T entity);
+
     }
 }

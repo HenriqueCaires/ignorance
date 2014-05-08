@@ -1,5 +1,5 @@
-﻿using Ignorance.Testing.AdventureWorksProvider;
-using Ignorance.Testing.Domain;
+﻿using Ignorance.Testing.Domain;
+using Ignorance.Testing.Providers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
 
@@ -15,17 +15,16 @@ namespace Ignorance.Testing
         {
             kernel = new StandardKernel();
 
-            kernel.Bind<IWorkAdventureWork>().ToProvider<AdventureWorkProvider>();
+            kernel.Bind<IIgnorantDepartment>().ToProvider<IgnorantDepartmentProvider>();
 
         }
 
         [TestMethod]
         public void the_entity_should_not_be_null()
         {
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.Create();
+                var d = ignorant.Create();
                 Assert.IsNotNull(d, "The entity was not created.");
             }
         }
@@ -33,10 +32,9 @@ namespace Ignorance.Testing
         [TestMethod]
         public void the_entity_should_be_initialized_with_default_values()
         {
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.Create();
+                var d = ignorant.Create();
                 Assert.AreEqual("New Department", d.Name, "OnCreate was not called.");
             }
         }

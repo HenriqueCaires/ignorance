@@ -1,5 +1,5 @@
-﻿using Ignorance.Testing.AdventureWorksProvider;
-using Ignorance.Testing.Domain;
+﻿using Ignorance.Testing.Domain;
+using Ignorance.Testing.Providers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
 
@@ -15,17 +15,16 @@ namespace Ignorance.Testing
         {
             kernel = new StandardKernel();
 
-            kernel.Bind<IWorkAdventureWork>().ToProvider<AdventureWorkProvider>();
+            kernel.Bind<IIgnorantDepartment>().ToProvider<IgnorantDepartmentProvider>();
 
         }
 
         [TestMethod]
         public void it_should_still_be_able_to_query_data()
         {
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                Assert.IsNotNull(s.GetFirst(), "Service did not create its own work when initialized without one.");
+                Assert.IsNotNull(ignorant.GetFirst(), "Service did not create its own work when initialized without one.");
             }
         }
     }

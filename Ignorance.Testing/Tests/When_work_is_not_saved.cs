@@ -5,7 +5,7 @@ using Ignorance.Testing.Data.EntityFramework;
 using Ignorance.Testing.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
-using Ignorance.Testing.AdventureWorksProvider;
+using Ignorance.Testing.Providers;
 
 namespace Ignorance.Testing
 {
@@ -21,19 +21,18 @@ namespace Ignorance.Testing
         {
             kernel = new StandardKernel();
 
-            kernel.Bind<IWorkAdventureWork>().ToProvider<AdventureWorkProvider>();
+            //kernel.Bind<IIgnorantContact>().ToProvider<IgnorantContactProvider>();
+            kernel.Bind<IIgnorantDepartment>().ToProvider<IgnorantDepartmentProvider>();
 
             // create a record using straight EF
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
                 var d = new Department() { 
                      Name = "Ignorance",
                      GroupName = "Information Technology",
                      ModifiedDate = DateTime.Today
                 };
-                s.Add(d);
-                s.SaveChanges();
+                ignorant.AddAndSave(d);
 
                 this.TestDepartmentID = d.DepartmentID;
             }
@@ -45,20 +44,19 @@ namespace Ignorance.Testing
         {
             var guidName = Guid.NewGuid().ToString();
             // using Service API, Add a record
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.Create();
+                var d = ignorant.Create();
                 d.Name = guidName;
-                s.Add(d);
+                ignorant.Add(d);
 
                 // but do NOT call Save on Work.
             }
 
             // test (using straight EF) that the record still exists.
-            using (var db = new AdventureWorksEntities())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var d = db.Departments.FirstOrDefault(p => p.Name == guidName);
+                var d = ignorant.FindByName(guidName);
                 Assert.IsNull(d, "Add was persisted without Work.Save().");
             }
         }
@@ -67,12 +65,11 @@ namespace Ignorance.Testing
         public void changes_to_entities_should_not_persist()
         {
             // using Service API, call Update on the record
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work); ;
-                var d = s.GetByID(this.TestDepartmentID);
+                var d = ignorant.GetByID(this.TestDepartmentID);
                 d.Name = "Updated";
-                s.Update(d);
+                ignorant.Update(d);
 
                 // but do NOT call Save on Work.
             }
@@ -89,19 +86,18 @@ namespace Ignorance.Testing
         public void entities_should_not_be_deleted_from_storage()
         {
             // using Service API, call Delete on the record
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.GetByID(this.TestDepartmentID);
-                s.Delete(d);
+                var d = ignorant.GetByID(this.TestDepartmentID);
+                ignorant.Delete(d);
 
                 // but do NOT call Save on Work.
             }
 
             // test (using straight EF) that the record still exists.
-            using (var db = new AdventureWorksEntities())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var d = db.Departments.Find(this.TestDepartmentID);
+                var d = ignorant.Find(this.TestDepartmentID);
                 Assert.IsNotNull(d, "Changes were persisted without Work.Save().");
             }
         }
@@ -110,11 +106,10 @@ namespace Ignorance.Testing
         public void TearDown()
         {
             // delete the test record using straight EF
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.Find(this.TestDepartmentID);
-                s.DeleteAndSave(d);
+                var d = ignorant.Find(this.TestDepartmentID);
+                ignorant.DeleteAndSave(d);
             }
         }
     }

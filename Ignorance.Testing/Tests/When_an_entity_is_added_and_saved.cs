@@ -2,7 +2,6 @@
 using Ignorance.Testing.Data.EntityFramework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
-using Ignorance.Testing.AdventureWorksProvider;
 using Ignorance.Testing.Domain;
 
 namespace Ignorance.Testing
@@ -16,10 +15,9 @@ namespace Ignorance.Testing
         [TestMethod]
         public void it_should_persist_to_storage()
         {
-            using (var work = kernel.Get<IWorkAdventureWork>())
+            using (var ignorant = kernel.Get<IIgnorantDepartment>())
             {
-                var s = new DepartmentService(work);
-                var d = s.FindByName(this.Dept.Name);
+                var d = ignorant.FindByName(this.Dept.Name);
                 Assert.IsNotNull(d, "Entity was not created and saved.");
             }
         }

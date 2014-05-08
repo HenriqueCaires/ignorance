@@ -8,14 +8,11 @@ namespace Ignorance.Domain
     {
         void Add(System.Collections.Generic.IEnumerable<T> entities);
         void Add(T entity);
-        void AddAndSave(T entity);
         T Create();
         void Delete(System.Collections.Generic.IEnumerable<T> entities);
         void Delete(T entity);
-        void DeleteAndSave(T entity);
         void Update(System.Collections.Generic.IEnumerable<T> entities);
         void Update(T entity);
-        void UpdateAndSave(T entity);
     }
 
     /// <summary>
@@ -46,8 +43,8 @@ namespace Ignorance.Domain
         }
 
         protected virtual void WireUpValidators()
-        {        
-            this.Work.Adding += (object sender, EntityEventArgs e) => 
+        {
+            this.Work.Adding += (object sender, EntityEventArgs e) =>
             {
                 if (e.Entity is T)
                     OnSaving(e.Entity as T);
@@ -94,7 +91,7 @@ namespace Ignorance.Domain
         /// </summary>
         /// <returns></returns>
         protected IStore<T> Store { get; set; }
-        
+
         /// <summary>
         /// Called after the given entity has been instantiated. 
         /// Use this method to apply defaults for the entity.
@@ -114,7 +111,7 @@ namespace Ignorance.Domain
             OnCreated(entity);
             return entity;
         }
-        
+
         /// <summary>
         /// Adds the logic from OnSaving to a list of things 
         /// the Work needs to do before it can save the given
@@ -159,7 +156,7 @@ namespace Ignorance.Domain
         {
             foreach (var e in entities) Update(e);
         }
-        
+
         /// <summary>
         /// Makes really solid plans to delete the given entity.
         /// </summary>
@@ -169,7 +166,7 @@ namespace Ignorance.Domain
             this.Store.Attach(entity);
             this.Store.Remove(entity);
         }
-        
+
         /// <summary>
         /// Makes really solid plans to delete each 
         /// of the entities in the given list.
@@ -178,22 +175,6 @@ namespace Ignorance.Domain
         public virtual void Delete(IEnumerable<T> entities)
         {
             foreach (var e in entities) Delete(e);
-        }
-
-
-        public void AddAndSave(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteAndSave(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateAndSave(T entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }

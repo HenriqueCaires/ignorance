@@ -7,7 +7,7 @@ namespace Ignorance.EntityFramework
     public class Store<T> : Ignorance.Store<T>
         where T : class
     {
-        public Store(IWorkEntityFramework work) : base(work) { }
+        public Store(IWork work) : base(work) { }
 
         protected virtual DbContext Context
         {
@@ -23,12 +23,12 @@ namespace Ignorance.EntityFramework
         {
             get { return this.Context.Set<T>(); }
         }
-                
+
         public override void Remove(T entity)
         {
             this.Set.Remove(entity);
         }
-                
+
         public override void Add(T entity)
         {
             SetState(entity, EntityState.Added);
